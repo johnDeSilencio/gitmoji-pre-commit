@@ -1,3 +1,4 @@
+use conventional::CommitMessage;
 use std::env::args;
 
 mod conventional {
@@ -79,8 +80,11 @@ fn main() {
         panic!("expected commit message as a command-line argument!");
     };
 
-    match commit_msg {
-        _ => panic!("expected a conventional commit message"),
+    // Source: https://github.com/folke/devmoji?tab=readme-ov-file#default-devmoji-reference
+    let conventional_commit_msg = CommitMessage::try_new(commit_msg).unwrap();
+    let modified_commit_msg = conventional_commit_msg.insert_emoji().unwrap();
+
+    println!("{}", modified_commit_msg);
 }
 
 #[cfg(test)]
