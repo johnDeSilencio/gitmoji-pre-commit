@@ -81,5 +81,77 @@ fn main() {
 
     match commit_msg {
         _ => panic!("expected a conventional commit message"),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::conventional::*;
+
+    #[test]
+    fn test_valid_conventional_commit() {
+        // Arrange
+        let commit_msgs = [
+            "build(foo): bar baz",
+            "build: bar baz",
+            "chore(foo): bar baz",
+            "chore: bar baz",
+            "ci(foo): bar baz",
+            "ci: bar baz",
+            "docs(foo): bar baz",
+            "docs: bar baz",
+            "feat(foo): bar baz",
+            "feat: bar baz",
+            "fix(foo): bar baz",
+            "fix: bar baz",
+            "perf(foo): bar baz",
+            "perf: bar baz",
+            "refactor(foo): bar baz",
+            "refactor: bar baz",
+            "revert(foo): bar baz",
+            "revert: bar baz",
+            "style(foo): bar baz",
+            "style: bar baz",
+            "test(foo): bar baz",
+            "test: bar baz",
+        ];
+
+        for commit_msg in commit_msgs {
+            // Act
+            let conventional_commit_msg = CommitMessage::try_new(String::from(commit_msg));
+
+            // Assert
+            assert_eq!(
+                conventional_commit_msg.err(),
+                None,
+                "Failed to parse conventional commit from \"{commit_msg}\""
+            );
+        }
+    }
+
+    #[test]
+    fn test_invalid_conventional_commit() {
+        // Arrange
+        let commit_msgs = [
+            "foo bar baz",
+            "asdf(foo): bar baz",
+            "asdf: bar baz",
+            "feat",
+            "feat:",
+            "feat: ",
+            "feat(foo):",
+            "feat(food): ",
+        ];
+
+        for commit_msg in commit_msgs {
+            // Act
+            let conventional_commit_msg = CommitMessage::try_new(String::from(commit_msg));
+
+            // Assert
+            assert_eq!(
+                conventional_commit_msg.ok(),
+                None,
+                "Should have failed to parse a conventional commit from \"{commit_msg}\""
+            );
+        }
     }
 }
