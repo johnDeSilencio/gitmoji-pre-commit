@@ -76,6 +76,8 @@ mod conventional {
 fn main() {
     let args = args();
 
+    println!("{:?}", args);
+
     let Some(commit_msg) = args.into_iter().nth(1) else {
         panic!("expected commit message as a command-line argument!");
     };
