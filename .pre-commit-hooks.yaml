@@ -1,0 +1,8 @@
+- id: gitmoji-pre-commit
+  name: Add emojis to conventional commits
+  description: This hook will fail if your commit message is not formatted as a conventional commit message.
+  entry: gitmoji-pre-commit
+  language: rust
+  types: [rust]
+  stages: [commit-msg, manual]
+  pass_filenames: false
