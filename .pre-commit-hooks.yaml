@@ -6,3 +6,4 @@
   types: [rust]
   stages: [commit-msg, manual]
   pass_filenames: false
+  always_run: true
