@@ -84,12 +84,12 @@ fn main() {
     }
 
     let commit_msg = fs::read("./.git/COMMIT_EDITMSG").expect("we can read from the file");
+    let commit_msg = String::from_utf8(commit_msg).expect("no invalid UTF-8 in commit message");
+
+    println!("commit_msg: {}", commit_msg);
 
     // Source: https://github.com/folke/devmoji?tab=readme-ov-file#default-devmoji-reference
-    let conventional_commit_msg = CommitMessage::try_new(
-        String::from_utf8(commit_msg).expect("no invalid UTF-8 in commit message"),
-    )
-    .unwrap();
+    let conventional_commit_msg = CommitMessage::try_new(commit_msg).unwrap();
     let modified_commit_msg = conventional_commit_msg.insert_emoji().unwrap();
 
     fs::write(
