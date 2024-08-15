@@ -15,7 +15,8 @@ mod conventional {
     impl CommitMessage {
         pub fn try_new(message: String) -> Result<CommitMessage, String> {
             let conventional_commit_re =
-                Regex::new(r#"^(\w+){1}(\([\w\-\.]+\))?(!)?: ([\w ])+([\s\S]*)"#).unwrap();
+                Regex::new(r#"^(\w+){1}(\([\w\-\.]+\))?(!)?: (\p{Emoji})?([\w ])+([\s\S]*)"#)
+                    .unwrap();
             if !conventional_commit_re.is_match(&message) {
                 return Err(String::from("expected conventional commit message"));
             }
@@ -43,11 +44,14 @@ mod conventional {
                 panic!("expected a conventional commit message");
             };
 
-            let emoji_re = Regex::new(r#"\p{Emoji}"#).unwrap();
+            let emoji_re = Regex::new(
+                r#"^(\w+){1}(\([\w\-\.]+\))?(!)?: (\p{Emoji})([\w ])+([\s\S]*)\p{Emoji}"#,
+            )
+            .unwrap();
             if emoji_re.is_match(&self.message) {
-                return Err(String::from(
-                    "expected conventional commit to not have emojis already in it",
-                ));
+                // Already contains an emoji, probably running git commit --amend.
+                // Return the message as it
+                return Ok(EmojiCommitMessage(self.message));
             }
 
             let mut ret_val = String::from(self.message);
