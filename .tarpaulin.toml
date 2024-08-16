@@ -1,0 +1,5 @@
+[default]
+all-features = true
+
+[report]
+out = ["Html"]
