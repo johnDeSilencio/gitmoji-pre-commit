@@ -18,10 +18,12 @@ fn main() -> Result<()> {
     let terminal = ratatui::init();
 
     let contents = read_emojis_toml();
+    let groups = parse_groups(contents.clone());
     let conventional_commits = parse_conventional_commits(contents);
 
     let app = App {
         state: AppState::Running,
+        groups,
         conventional_commits,
     };
 
@@ -33,6 +35,7 @@ fn main() -> Result<()> {
 #[derive(Default)]
 struct App {
     state: AppState,
+    groups: Vec<Group>,
     conventional_commits: Vec<ConventionalCommit>,
 }
 
@@ -71,6 +74,13 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
+        let mut groups: Vec<Line> = Vec::with_capacity(self.groups.len());
+        
+        for group in self.groups.iter() {
+            let line: Line = format!("{}: {}", group.name, group.description).into();
+            groups.push(line);
+        }
+
         let mut commits: Vec<Line> = Vec::with_capacity(self.conventional_commits.len());
 
         for commit in self.conventional_commits.iter() {
@@ -79,6 +89,7 @@ impl Widget for &App {
             commits.push(line);
         }
 
-        Paragraph::new(commits).render(area, buf);
+        Paragraph::new(groups).render(area, buf);
+        // Paragraph::new(commits).render(area, buf);
     }
 }

@@ -5,6 +5,17 @@ use serde::Deserialize;
 const EMOJIS_TOML_PATH: &str = "emojis.toml";
 
 #[derive(Debug, Deserialize)]
+pub struct Groups {
+    group: Vec<Group>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Group {
+    pub name: String,
+    pub description: String,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct ConventionalCommits {
     commit: Vec<ConventionalCommit>,
 }
@@ -34,4 +45,10 @@ pub fn parse_conventional_commits(contents: String) -> Vec<ConventionalCommit> {
         toml::from_str(contents.as_str()).expect("Should have parsed correctly");
 
     conventional_commits.commit
+}
+
+pub fn parse_groups(contents: String) -> Vec<Group> {
+    let groups: Groups = toml::from_str(contents.as_str()).expect("Should have parsed correctly");
+
+    groups.group
 }
