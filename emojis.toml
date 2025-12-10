@@ -1,0 +1,381 @@
+# Description of each group of conventional commit
+
+[[group]]
+name = "accessibility"
+description = "Accessibility and / or discoverability of the project / repository"
+
+[[group]]
+name = "architecture"
+description = "Modify the design, shape, or architecture of the project / repository"
+
+[[group]]
+name = "core"
+description = "Core to the central purpose of the project / repository"
+
+[[group]]
+name = "cybersecurity"
+description = "Have cybersecurity implications"
+
+[[group]]
+name = "dependencies"
+description = "Changing dependencies"
+
+[[group]]
+name = "deployment"
+description = "Deployment of the project / repository"
+
+[[group]]
+name = "documentation"
+description = "Documentation of internal implementation of the project / repository"
+
+[[group]]
+name = "fun"
+description = "Just for fun :)"
+
+[[group]]
+name = "impermanent"
+description = "May not be permanent"
+
+[[group]]
+name = "improvement"
+description = "Incremental update to what already exists in the project / repository"
+
+[[group]]
+name = "infrastructure"
+description = "Building and developing of the project / repository"
+
+[[group]]
+name = "metadata"
+description = "Project / repository metadata"
+
+[[group]]
+name = "persistence"
+description = "How the project / repository persists information"
+
+[[group]]
+name = "presentation"
+description = "Presentation of the project / repo to the user"
+
+[[group]]
+name = "testing"
+description = "Test or mock used in tests"
+
+# The conventional commit types themselves
+
+[[commit]]
+type = "a11y"
+emoji = "♿"
+group = "accessibility"
+description = "Changes relating to accessibility"
+
+[[commit]]
+type = "add"
+emoji = "➕"
+group = "dependencies"
+description = "Add a dependency or dependencies"
+
+[[commit]]
+type = "animation"
+emoji = "💫"
+group = "presentation"
+description = "Changes relating to animations or transitions in the UI"
+
+[[commit]]
+type = "auth"
+emoji = "🛂"
+group = "cybersecurity"
+description = "Changes related to authorization, roles, permissions, or authentication"
+
+[[commit]]
+type = "build"
+emoji = "👷"
+group = "infrastructure"
+description = "Change build process"
+
+[[commit]]
+type = "business"
+emoji = "👔"
+group = "core"
+description = "Add, modify, or remove business logic"
+
+[[commit]]
+type = "change"
+emoji = "📋"
+group = "metadata"
+description = "Modifications to the changelog"
+
+[[commit]]
+type = "comment"
+emoji = "📖"
+group = "documentation"
+description = "Modifications to doc comments"
+
+[[commit]]
+type = "concur"
+emoji = "🧵"
+group = "architecture"
+description = "Multi-threading or concurrency related changes"
+
+[[commit]]
+type = "contributor"
+emoji = "👥"
+group = "metadata"
+description = "Modifications to the list of contributors"
+
+[[commit]]
+type = "chore"
+emoji = "🔧"
+group = "infrastructure"
+description = "Miscellaneous activity"
+
+[[commit]]
+type = "ci"
+emoji = "🧱"
+group = "infrastructure"
+description = "Change CI/CD build pipeline"
+
+[[commit]]
+type = "crit"
+emoji = "🚑️"
+group = "core"
+description = "Critical hotfix"
+
+[[commit]]
+type = "data"
+emoji = "🛢️"
+group = "persistence"
+description = "Changes related to database / persistence layer"
+
+[[commit]]
+type = "dead"
+emoji = "⚰️"
+group = "improvement"
+description = "Remove dead code"
+
+[[commit]]
+type = "deploy"
+emoji = "🚀"
+group = "deployment"
+description = "Relates to deployment"
+
+[[commit]]
+type = "deprecate"
+emoji = "🗑️"
+group = "core"
+description = "Changes that deprecate part or all of an API"
+
+[[commit]]
+type = "devx"
+emoji = "🖥️"
+group = "infrastructure"
+description = "Improve or modify developer experience"
+
+[[commit]]
+type = "docs"
+emoji = "📝"
+group = "documentation"
+description = "Add, edit or remove user-facing documentation"
+
+[[commit]]
+type = "downgrade"
+emoji = "⬇️"
+group = "dependencies"
+description = "Downgrade dependency or dependencies"
+
+[[commit]]
+type = "easter"
+emoji = "🥚"
+group = "fun"
+description = "Add or modify easter eggs"
+
+[[commit]]
+type = "experiment"
+emoji = "⚗️"
+group = "impermanent"
+description = "Changes that may not be permanent"
+
+[[commit]]
+type = "extern"
+emoji = "👽"
+group = "core"
+description = "Change resulting from external API dependency changes"
+
+[[commit]]
+type = "feat"
+emoji = "✨"
+group = "core"
+description = "Add a new feature"
+
+[[commit]]
+type = "fix"
+emoji = "🩹"
+group = "core"
+description = "Partially or completely resolve a defect or a bug"
+
+[[commit]]
+type = "flag"
+emoji = "🚩"
+group = "metadata"
+description = "Add, modify, or remove feature flags"
+
+[[commit]]
+type = "handle"
+emoji = "🥅"
+group = "improvement"
+description = "Improve error handling"
+
+[[commit]]
+type = "health"
+emoji = "🩺"
+group = "deployment"
+description = "Changes relating to detecting the health of the deployment"
+
+[[commit]]
+type = "holdmy"
+emoji = "🍻"
+group = "fun"
+description = "Drunken commit"
+
+[[commit]]
+type = "i18n"
+emoji = "🌐"
+group = "accessibility"
+description = "Add or modify internationalization / localization"
+
+[[commit]]
+type = "ignore"
+emoji = "🙈"
+group = "metadata"
+description = "Modify ignore files like .gitignore"
+
+[[commit]]
+type = "init"
+emoji = "🎉"
+group = "metadata"
+description = "Initial commit"
+
+[[commit]]
+type = "license"
+emoji = "📄"
+group = "metadata"
+description = "Modifications to the license of the project or repo"
+
+[[commit]]
+type = "lint"
+emoji = "🚨"
+group = "improvement"
+description = "Fix linter warnings / errors"
+
+[[commit]]
+type = "logging"
+emoji = "🪵"
+group = "deployment"
+description = "Modify features related to logging"
+
+[[commit]]
+type = "merge"
+emoji = "🔀"
+group = "metadata"
+description = "Merge branches"
+
+[[commit]]
+type = "metrics"
+emoji = "📈"
+group = "deployment"
+description = "Metrics or analytics"
+
+[[commit]]
+type = "mock"
+emoji = "🤡"
+group = "testing"
+description = "Changes relating to mocks for unit tests"
+
+[[commit]]
+type = "move"
+emoji = "🚚"
+group = "metadata"
+description = "Move files or resources to alternate path"
+
+[[commit]]
+type = "pass"
+emoji = "✅"
+group = "testing"
+description = "Update previously passing tests or pass previously failing tests"
+
+[[commit]]
+type = "perf"
+emoji = "⚡"
+group = "improvement"
+description = "Improve performance of existing function / feature"
+
+[[commit]]
+type = "refactor"
+emoji = "♻️"
+group = "improvement"
+description = "Modify existing behavior"
+
+[[commit]]
+type = "remove"
+emoji = "➖"
+group = "dependencies"
+description = "Remove a dependency or dependencies"
+
+[[commit]]
+type = "revert"
+emoji = "⏪"
+group = "metadata"
+description = "Revert a commit"
+
+[[commit]]
+type = "safety"
+emoji = "🦺"
+group = "cybersecurity"
+description = "Changes related to parsing or validation of untrusted input"
+
+[[commit]]
+type = "secret"
+emoji = "🔐"
+group = "cybersecurity"
+description = "Add or modify handling of secrets"
+
+[[commit]]
+type = "seo"
+emoji = "🔍"
+group = "accessibility"
+description = "Changes related to Search Engine Optimization (SEO)"
+
+[[commit]]
+type = "style"
+emoji = "🎨"
+group = "improvement"
+description = "Change whitespace and / or formatting"
+
+[[commit]]
+type = "test"
+emoji = "🧪"
+group = "testing"
+description = "Add one or more failing tests"
+
+[[commit]]
+type = "type"
+emoji = "🏷️"
+group = "architecture"
+description = "Add, modify, or remove types"
+
+[[commit]]
+type = "typo"
+emoji = "✏️"
+group = "documentation"
+description = "Fix typos"
+
+[[commit]]
+type = "ui"
+emoji = "💄"
+group = "presentation"
+description = "UI style changes"
+
+[[commit]]
+type = "upgrade"
+emoji = "⬆️"
+group = "dependencies"
+description = "Upgrade dependency or dependencies"
