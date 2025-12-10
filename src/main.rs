@@ -1,3 +1,6 @@
+pub mod io;
+
+use crate::io::*;
 use color_eyre::Result;
 use ratatui::{
     buffer::Buffer,
@@ -13,7 +16,16 @@ use ratatui::{
 fn main() -> Result<()> {
     color_eyre::install()?;
     let terminal = ratatui::init();
-    let app_result = App::default().run(terminal);
+
+    let contents = read_emojis_toml();
+    let conventional_commits = parse_conventional_commits(contents);
+
+    let app = App {
+        state: AppState::Running,
+        conventional_commits,
+    };
+
+    let app_result = app.run(terminal);
     ratatui::restore();
     app_result
 }
@@ -21,6 +33,7 @@ fn main() -> Result<()> {
 #[derive(Default)]
 struct App {
     state: AppState,
+    conventional_commits: Vec<ConventionalCommit>,
 }
 
 #[derive(Default, Clone, Copy, PartialEq, Eq)]
@@ -58,6 +71,14 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        "Hello, world!".bold().render(area, buf);
+        let mut commits: Vec<Line> = Vec::with_capacity(self.conventional_commits.len());
+
+        for commit in self.conventional_commits.iter() {
+            let line: Line = 
+            format!("{}: {} {}\n", commit.r#type, commit.emoji, commit.description).into();
+            commits.push(line);
+        }
+
+        Paragraph::new(commits).render(area, buf);
     }
 }
