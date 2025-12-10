@@ -23,6 +23,8 @@ fn main() -> Result<()> {
 
     let app = App {
         state: AppState::Running,
+        current_group_index: 0,
+        current_subgroup_index: None,
         groups,
         conventional_commits,
     };
@@ -35,6 +37,8 @@ fn main() -> Result<()> {
 #[derive(Default)]
 struct App {
     state: AppState,
+    current_group_index: usize,
+    current_subgroup_index: Option<usize>,
     groups: Vec<Group>,
     conventional_commits: Vec<ConventionalCommit>,
 }
@@ -59,12 +63,45 @@ impl App {
     fn handle_events(&mut self) -> std::io::Result<()> {
         if let Event::Key(key) = event::read()? && key.kind == KeyEventKind::Press {
             match key.code {
+                KeyCode::Char('h') | KeyCode::Left => self.move_left(),
+                KeyCode::Char('l') | KeyCode::Right => self.move_right(),
+                KeyCode::Char('j') | KeyCode::Down => self.move_down(),
+                KeyCode::Char('k') | KeyCode::Up => self.move_up(),
+                KeyCode::Enter => self.handle_enter(),
                 KeyCode::Char('q') => self.quit(),
                 _ => {}
             }
         }
 
         Ok(())
+    }
+
+    fn move_left(&mut self) {
+        todo!()
+    }
+
+    fn move_right(&mut self) {
+        todo!()
+    }
+
+    fn move_up(&mut self) {
+        if self.current_group_index == 0 {
+            self.current_group_index = self.groups.len() - 1;
+        } else {
+            self.current_group_index -= 1;
+        }
+    }
+
+    fn move_down(&mut self) {
+        if self.current_group_index + 1 == self.groups.len() {
+            self.current_group_index = 0;
+        } else {
+            self.current_group_index += 1;
+        }
+    }
+    
+    fn handle_enter(&mut self) {
+        todo!()
     }
 
     fn quit(&mut self) {
@@ -76,11 +113,16 @@ impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let mut groups: Vec<Line> = Vec::with_capacity(self.groups.len());
         
-        for group in self.groups.iter() {
-            let line: Line = format!("{}: {}", group.name, group.description).into();
+        for (index, group) in self.groups.iter().enumerate() {
+            let mut line: Line = format!("{}: {}", group.name, group.description).into();
+        
+            if self.current_group_index == index {
+                line = line.bg(Color::Green);
+            }
+
             groups.push(line);
         }
-
+            
         let mut commits: Vec<Line> = Vec::with_capacity(self.conventional_commits.len());
 
         for commit in self.conventional_commits.iter() {
