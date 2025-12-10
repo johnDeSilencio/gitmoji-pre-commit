@@ -1,5 +1,5 @@
 [toolchain]
-channel = "nightly-2024-10-19"
+channel = "1.91.1"
 components = [
     "clippy-preview",
     "rust-analyzer",

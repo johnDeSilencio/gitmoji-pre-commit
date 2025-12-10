@@ -1,0 +1,1 @@
+warning /home/nicholas/Documents/Rust/gitmoji-pre-commit/src/main.rs:5:14 unused imports: `Block`, `Color`, `Constraint`, `Layout`, `Padding`, `Paragraph`, `Tabs`, `palette::tailwind`, `symbols`, and `text::Line`
