@@ -1,74 +1,40 @@
-pub mod io;
+pub mod emoji;
 
-use crate::io::*;
-use color_eyre::Result;
-use ratatui::{
-    buffer::Buffer,
-    crossterm::event::{self, Event, KeyCode, KeyEventKind},
-    layout::{Constraint, Layout, Rect},
-    style::{palette::tailwind, Color, Stylize},
-    symbols,
-    text::Line,
-    widgets::{Block, Padding, Paragraph, Tabs, Widget},
-    DefaultTerminal,
-};
+use std::io;
 
-fn main() -> Result<()> {
-    color_eyre::install()?;
-    let terminal = ratatui::init();
+use crossterm::event::{KeyCode, KeyEventKind};
+use ratatui::widgets::Widget;
+use ratatui::{DefaultTerminal, Frame};
 
-    let contents = read_emojis_toml();
-    let groups = parse_groups(contents.clone());
-    let conventional_commits = parse_conventional_commits(contents);
+use crate::emoji::{MainList, ScreenMode};
 
-    let app = App {
-        state: AppState::Running,
-        current_group_index: 0,
-        current_subgroup_index: None,
-        groups,
-        conventional_commits,
+fn main() -> io::Result<()> {
+    let mut terminal = ratatui::init();
+
+    let mut app = App {
+        exit: false,
+        screen_mode: ScreenMode::Main(MainList::new()),
     };
 
-    let app_result = app.run(terminal);
+    let app_result = app.run(&mut terminal);
+
     ratatui::restore();
+
     app_result
 }
 
-#[derive(Default)]
 struct App {
-    state: AppState,
-    current_group_index: usize,
-    current_subgroup_index: Option<usize>,
-    groups: Vec<Group>,
-    conventional_commits: Vec<ConventionalCommit>,
-}
-
-#[derive(Default, Clone, Copy, PartialEq, Eq)]
-enum AppState {
-    #[default]
-    Running,
-    Quitting,
+    exit: bool,
+    screen_mode: ScreenMode,
 }
 
 impl App {
-    fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
-        while self.state == AppState::Running {
-            terminal.draw(|frame| frame.render_widget(&self, frame.area()))?;
-            self.handle_events()?;
-        }
+    fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
+        while !self.exit {
+            terminal.draw(|frame| self.draw(frame))?;
 
-        Ok(())
-    }
-
-    fn handle_events(&mut self) -> std::io::Result<()> {
-        if let Event::Key(key) = event::read()? && key.kind == KeyEventKind::Press {
-            match key.code {
-                KeyCode::Char('h') | KeyCode::Left => self.move_left(),
-                KeyCode::Char('l') | KeyCode::Right => self.move_right(),
-                KeyCode::Char('j') | KeyCode::Down => self.move_down(),
-                KeyCode::Char('k') | KeyCode::Up => self.move_up(),
-                KeyCode::Enter => self.handle_enter(),
-                KeyCode::Char('q') => self.quit(),
+            match crossterm::event::read()? {
+                crossterm::event::Event::Key(key_event) => self.handle_key_event(key_event)?,
                 _ => {}
             }
         }
@@ -76,62 +42,151 @@ impl App {
         Ok(())
     }
 
-    fn move_left(&mut self) {
-        todo!()
+    fn draw(&mut self, frame: &mut Frame) {
+        frame.render_widget(self, frame.area());
     }
 
-    fn move_right(&mut self) {
-        todo!()
-    }
-
-    fn move_up(&mut self) {
-        if self.current_group_index == 0 {
-            self.current_group_index = self.groups.len() - 1;
-        } else {
-            self.current_group_index -= 1;
+    fn handle_key_event(&mut self, key_event: crossterm::event::KeyEvent) -> io::Result<()> {
+        if key_event.kind == KeyEventKind::Press {
+            match key_event.code {
+                KeyCode::Char('q') => self.exit = true,
+                KeyCode::Char('j') => match &mut self.screen_mode {
+                    ScreenMode::Main(list) => list.select_next(),
+                    ScreenMode::Accessibility(list) => list.select_next(),
+                    ScreenMode::Architecture(list) => list.select_next(),
+                    ScreenMode::Core(list) => list.select_next(),
+                    ScreenMode::Cybersecurity(list) => list.select_next(),
+                    ScreenMode::Dependencies(list) => list.select_next(),
+                    ScreenMode::Deployment(list) => list.select_next(),
+                    ScreenMode::Documentation(list) => list.select_next(),
+                    ScreenMode::Fun(list) => list.select_next(),
+                    ScreenMode::Impermanent(list) => list.select_next(),
+                    ScreenMode::Improvement(list) => list.select_next(),
+                    ScreenMode::Infrastructure(list) => list.select_next(),
+                    ScreenMode::Metadata(list) => list.select_next(),
+                    ScreenMode::Persistence(list) => list.select_next(),
+                    ScreenMode::Presentation(list) => list.select_next(),
+                    ScreenMode::Testing(list) => list.select_next(),
+                },
+                KeyCode::Char('k') => match &mut self.screen_mode {
+                    ScreenMode::Main(list) => list.select_previous(),
+                    ScreenMode::Accessibility(list) => list.select_previous(),
+                    ScreenMode::Architecture(list) => list.select_previous(),
+                    ScreenMode::Core(list) => list.select_previous(),
+                    ScreenMode::Cybersecurity(list) => list.select_previous(),
+                    ScreenMode::Dependencies(list) => list.select_previous(),
+                    ScreenMode::Deployment(list) => list.select_previous(),
+                    ScreenMode::Documentation(list) => list.select_previous(),
+                    ScreenMode::Fun(list) => list.select_previous(),
+                    ScreenMode::Impermanent(list) => list.select_previous(),
+                    ScreenMode::Improvement(list) => list.select_previous(),
+                    ScreenMode::Infrastructure(list) => list.select_previous(),
+                    ScreenMode::Metadata(list) => list.select_previous(),
+                    ScreenMode::Persistence(list) => list.select_previous(),
+                    ScreenMode::Presentation(list) => list.select_previous(),
+                    ScreenMode::Testing(list) => list.select_previous(),
+                },
+                KeyCode::Esc => match &mut self.screen_mode {
+                    ScreenMode::Main(_) => self.exit = true,
+                    _ => self.screen_mode = ScreenMode::Main(MainList::new()),
+                },
+                KeyCode::Enter => match &mut self.screen_mode {
+                    ScreenMode::Main(list) => {
+                        if let Some(screen_mode) = list.select() {
+                            self.screen_mode = screen_mode;
+                        }
+                    }
+                    ScreenMode::Accessibility(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Architecture(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Core(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Cybersecurity(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Dependencies(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Deployment(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Documentation(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Fun(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Impermanent(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Improvement(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Infrastructure(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Metadata(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Persistence(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Presentation(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                    ScreenMode::Testing(list) => {
+                        list.select();
+                        self.exit = true;
+                    }
+                },
+                _ => {}
+            }
         }
-    }
 
-    fn move_down(&mut self) {
-        if self.current_group_index + 1 == self.groups.len() {
-            self.current_group_index = 0;
-        } else {
-            self.current_group_index += 1;
-        }
-    }
-    
-    fn handle_enter(&mut self) {
-        todo!()
-    }
-
-    fn quit(&mut self) {
-        self.state = AppState::Quitting;
+        Ok(())
     }
 }
 
-impl Widget for &App {
-    fn render(self, area: Rect, buf: &mut Buffer) {
-        let mut groups: Vec<Line> = Vec::with_capacity(self.groups.len());
-        
-        for (index, group) in self.groups.iter().enumerate() {
-            let mut line: Line = format!("{}: {}", group.name, group.description).into();
-        
-            if self.current_group_index == index {
-                line = line.bg(Color::Green);
-            }
-
-            groups.push(line);
+impl Widget for &mut App {
+    fn render(self, area: ratatui::layout::Rect, buf: &mut ratatui::buffer::Buffer)
+    where
+        Self: Sized,
+    {
+        match &mut self.screen_mode {
+            ScreenMode::Main(list) => list.render(area, buf),
+            ScreenMode::Accessibility(list) => list.render(area, buf),
+            ScreenMode::Architecture(list) => list.render(area, buf),
+            ScreenMode::Core(list) => list.render(area, buf),
+            ScreenMode::Cybersecurity(list) => list.render(area, buf),
+            ScreenMode::Dependencies(list) => list.render(area, buf),
+            ScreenMode::Deployment(list) => list.render(area, buf),
+            ScreenMode::Documentation(list) => list.render(area, buf),
+            ScreenMode::Fun(list) => list.render(area, buf),
+            ScreenMode::Impermanent(list) => list.render(area, buf),
+            ScreenMode::Improvement(list) => list.render(area, buf),
+            ScreenMode::Infrastructure(list) => list.render(area, buf),
+            ScreenMode::Metadata(list) => list.render(area, buf),
+            ScreenMode::Persistence(list) => list.render(area, buf),
+            ScreenMode::Presentation(list) => list.render(area, buf),
+            ScreenMode::Testing(list) => list.render(area, buf),
         }
-            
-        let mut commits: Vec<Line> = Vec::with_capacity(self.conventional_commits.len());
-
-        for commit in self.conventional_commits.iter() {
-            let line: Line = 
-            format!("{}: {} {}\n", commit.r#type, commit.emoji, commit.description).into();
-            commits.push(line);
-        }
-
-        Paragraph::new(groups).render(area, buf);
-        // Paragraph::new(commits).render(area, buf);
     }
 }

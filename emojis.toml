@@ -26,7 +26,7 @@ description = "Deployment of the project / repository"
 
 [[group]]
 name = "documentation"
-description = "Documentation of internal implementation of the project / repository"
+description = "Documentation of Internal implementation of the project / repository"
 
 [[group]]
 name = "fun"
