@@ -4,7 +4,7 @@ use ratatui::widgets::{Block, BorderType, Borders, List, ListState, StatefulWidg
 
 use crate::emoji::{ConventionalCommit, copy_to_clipboard};
 
-const CORE: [ConventionalCommit; 6] = [
+const CORE: [ConventionalCommit; 7] = [
     ConventionalCommit {
         commit_type: "business",
         emoji: "👔",
@@ -34,6 +34,11 @@ const CORE: [ConventionalCommit; 6] = [
         commit_type: "fix",
         emoji: "🩹",
         description: "Partially or completely resolve a defect or a bug",
+    },
+    ConventionalCommit {
+        commit_type: "generate",
+        emoji: "🧬",
+        description: "Generate executable code",
     },
 ];
 
