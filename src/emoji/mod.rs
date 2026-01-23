@@ -14,6 +14,8 @@ pub mod persistence;
 pub mod presentation;
 pub mod testing;
 
+use std::ffi::OsString;
+use std::os::unix::ffi::OsStringExt;
 use std::fmt;
 
 use accessibility::*;
@@ -158,5 +160,24 @@ impl Widget for &mut MainList {
 }
 
 pub fn copy_to_clipboard(contents: String) {
-    std::process::Command::new("wl-copy").arg(contents).spawn().expect("Expected wl-copy process to run without errors");
+    if let Ok(uname_output) = std::process::Command::new("uname").arg("-a").output() && let Ok(uname_output) = String::from_utf8(uname_output.stdout) && uname_output.contains("microsoft") {
+        let contents = to_windows_str(contents);
+
+        std::process::Command::new("clip.exe").arg(OsString::from_vec(contents)).spawn().expect("Expected clip.exe process to run without errors");
+    } else {
+        std::process::Command::new("wl-copy").arg(contents).spawn().expect("Expected wl-copy process to run without errors");
+    }
+}
+
+fn to_windows_str(contents: String) -> Vec<u8> {
+    let mut contents: Vec<u16> = contents.encode_utf16().collect();
+    contents.push(0);
+
+    let mut le_bytes: Vec<u8> = Vec::with_capacity(2 * contents.len());
+
+    for unit in contents {
+        le_bytes.extend(unit.to_le_bytes());
+    }
+
+    le_bytes
 }
