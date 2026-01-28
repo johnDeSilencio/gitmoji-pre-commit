@@ -3,7 +3,8 @@ pub mod emoji;
 use std::io;
 
 use crossterm::event::{KeyCode, KeyEventKind};
-use ratatui::widgets::Widget;
+use ratatui::layout::{Alignment, Constraint, Layout};
+use ratatui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use ratatui::{DefaultTerminal, Frame};
 
 use crate::emoji::{MainList, ScreenMode};
@@ -87,7 +88,7 @@ impl App {
                     ScreenMode::Testing(list) => list.select_previous(),
                 },
                 KeyCode::Esc => match &mut self.screen_mode {
-                    ScreenMode::Main(_) => self.exit = true,
+                    ScreenMode::Main(_) => { /* do nothing on purpose */ }
                     _ => self.screen_mode = ScreenMode::Main(MainList::new()),
                 },
                 KeyCode::Enter => match &mut self.screen_mode {
@@ -170,23 +171,63 @@ impl Widget for &mut App {
     where
         Self: Sized,
     {
+        let layout = Layout::vertical([Constraint::Min(16), Constraint::Max(3)]);
+
+        let [emoji_area, info_area] = layout.areas(area);
+
         match &mut self.screen_mode {
-            ScreenMode::Main(list) => list.render(area, buf),
-            ScreenMode::Accessibility(list) => list.render(area, buf),
-            ScreenMode::Architecture(list) => list.render(area, buf),
-            ScreenMode::Core(list) => list.render(area, buf),
-            ScreenMode::Cybersecurity(list) => list.render(area, buf),
-            ScreenMode::Dependencies(list) => list.render(area, buf),
-            ScreenMode::Deployment(list) => list.render(area, buf),
-            ScreenMode::Documentation(list) => list.render(area, buf),
-            ScreenMode::Fun(list) => list.render(area, buf),
-            ScreenMode::Impermanent(list) => list.render(area, buf),
-            ScreenMode::Improvement(list) => list.render(area, buf),
-            ScreenMode::Infrastructure(list) => list.render(area, buf),
-            ScreenMode::Metadata(list) => list.render(area, buf),
-            ScreenMode::Persistence(list) => list.render(area, buf),
-            ScreenMode::Presentation(list) => list.render(area, buf),
-            ScreenMode::Testing(list) => list.render(area, buf),
+            ScreenMode::Main(list) => list.render(emoji_area, buf),
+            ScreenMode::Accessibility(list) => list.render(emoji_area, buf),
+            ScreenMode::Architecture(list) => list.render(emoji_area, buf),
+            ScreenMode::Core(list) => list.render(emoji_area, buf),
+            ScreenMode::Cybersecurity(list) => list.render(emoji_area, buf),
+            ScreenMode::Dependencies(list) => list.render(emoji_area, buf),
+            ScreenMode::Deployment(list) => list.render(emoji_area, buf),
+            ScreenMode::Documentation(list) => list.render(emoji_area, buf),
+            ScreenMode::Fun(list) => list.render(emoji_area, buf),
+            ScreenMode::Impermanent(list) => list.render(emoji_area, buf),
+            ScreenMode::Improvement(list) => list.render(emoji_area, buf),
+            ScreenMode::Infrastructure(list) => list.render(emoji_area, buf),
+            ScreenMode::Metadata(list) => list.render(emoji_area, buf),
+            ScreenMode::Persistence(list) => list.render(emoji_area, buf),
+            ScreenMode::Presentation(list) => list.render(emoji_area, buf),
+            ScreenMode::Testing(list) => list.render(emoji_area, buf),
+        }
+
+        let block = Block::default()
+            .title("Controls")
+            .borders(Borders::ALL)
+            .border_type(BorderType::Rounded);
+
+        block.render(info_area, buf);
+
+        let info_area = info_area.centered_vertically(Constraint::Length(1));
+
+        let info_areas = Layout::horizontal([
+            Constraint::Fill(1),
+            Constraint::Fill(1),
+            Constraint::Fill(1),
+            Constraint::Fill(1),
+            Constraint::Fill(1),
+        ])
+        .split(info_area);
+
+        // let area = info_area.centered_vertically(Constraint::Length(3));
+
+        // let inner_areas: [ratatui::layout::Rect; 5] = area.layout(&inner_layout);
+
+        let info_text = [
+            "j | Next item",
+            "k | Previous item",
+            "Enter | Copy to clipboard",
+            "Escape | Previous menu",
+            "q | Quit",
+        ];
+
+        for (area, text) in info_areas.iter().zip(info_text) {
+            let text = Paragraph::new(text).alignment(Alignment::Center);
+
+            text.render(*area, buf);
         }
     }
 }

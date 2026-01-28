@@ -14,9 +14,9 @@ pub mod persistence;
 pub mod presentation;
 pub mod testing;
 
-use std::ffi::OsString;
-use std::os::unix::ffi::OsStringExt;
+use std::io::Write;
 use std::fmt;
+use std::process::Stdio;
 
 use accessibility::*;
 use architecture::*;
@@ -143,7 +143,7 @@ impl Widget for &mut MainList {
         Self: Sized,
     {
         let block = Block::default()
-            .title(Line::from("Choose your Emoji").centered())
+            .title(Line::from(" Conventional Commit Types - Groups ").centered())
             .border_type(BorderType::Rounded)
             .borders(Borders::ALL);
 
@@ -163,7 +163,13 @@ pub fn copy_to_clipboard(contents: String) {
     if let Ok(uname_output) = std::process::Command::new("uname").arg("-a").output() && let Ok(uname_output) = String::from_utf8(uname_output.stdout) && uname_output.contains("microsoft") {
         let contents = to_windows_str(contents);
 
-        std::process::Command::new("clip.exe").arg(OsString::from_vec(contents)).spawn().expect("Expected clip.exe process to run without errors");
+        let child = std::process::Command::new("clip.exe").stdin(Stdio::piped()).spawn().expect("Expected clip.exe process to run without errors");
+
+        {
+            let mut stdin = child.stdin.expect("Expected stdin from child process");
+            stdin.write_all(&contents).expect("Expected no errors writing bytes to stdin of child process");
+            stdin.flush().expect("Expected no errors flushing stdin of child process");
+        }
     } else {
         std::process::Command::new("wl-copy").arg(contents).spawn().expect("Expected wl-copy process to run without errors");
     }
